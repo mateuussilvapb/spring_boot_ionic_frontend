@@ -12,6 +12,24 @@
   </ion-navbar>
 </ion-header>
 
+<!-- ================================================ -->
 <ion-content padding>
-<p>Página de categorias</p>
+  <!-- ================================================ -->
+  <ion-list>
+    <!-- ================================================ -->
+    <button ion-item *ngFor="let item of items">
+      <!-- ================================================ -->
+      <ion-thumbnail item-start>
+        <!-- ================================================ -->
+        <img src="{{bucketUrl}}/cat{{item.id}}.jpg" alt="">
+      </ion-thumbnail>
+      <!-- ================================================ -->
+      <ion-label>
+        <!-- ================================================ -->
+        <h2>{{item.nome}}</h2>
+        <!-- <h3>I'm a big deal</h3> -->
+        <!-- <p>Listen, I've had a pretty messed up day...</p> -->
+      </ion-label>
+    </button>
+  </ion-list>
 </ion-content>
