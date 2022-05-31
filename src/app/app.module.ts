@@ -1,3 +1,4 @@
+import { AuthService } from "./../services/auth.service";
 import { CategoriaService } from "./../services/domain/categoria.service";
 import { BrowserModule } from "@angular/platform-browser";
 import { HttpClientModule } from "@angular/common/http";
@@ -23,6 +24,7 @@ import { ErrorInterceptorProvider } from "../interceptors/error-interceptor";
   // ================================================= //
   providers: [
     StatusBar,
+    AuthService,
     SplashScreen,
     CategoriaService,
     ErrorInterceptorProvider,
