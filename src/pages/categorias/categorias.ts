@@ -29,9 +29,7 @@ export class CategoriasPage {
       (response) => {
         this.items = response;
       },
-      (error) => {
-        alert(error);
-      }
+      (error) => {}
     );
   }
 }
