@@ -1,3 +1,4 @@
+import { ClienteService } from "./../services/domain/cliente.service";
 import { StorageService } from "./../services/storage.service";
 import { AuthService } from "./../services/auth.service";
 import { CategoriaService } from "./../services/domain/categoria.service";
@@ -27,6 +28,7 @@ import { ErrorInterceptorProvider } from "../interceptors/error-interceptor";
     StatusBar,
     AuthService,
     SplashScreen,
+    ClienteService,
     StorageService,
     CategoriaService,
     ErrorInterceptorProvider,
