@@ -1,3 +1,4 @@
+import { AuthInterceptorProvider } from "./../interceptors/auth-interceptor";
 import { ClienteService } from "./../services/domain/cliente.service";
 import { StorageService } from "./../services/storage.service";
 import { AuthService } from "./../services/auth.service";
@@ -31,6 +32,7 @@ import { ErrorInterceptorProvider } from "../interceptors/error-interceptor";
     ClienteService,
     StorageService,
     CategoriaService,
+    AuthInterceptorProvider,
     ErrorInterceptorProvider,
     { provide: ErrorHandler, useClass: IonicErrorHandler },
   ],
