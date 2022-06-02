@@ -1,3 +1,4 @@
+import { StorageService } from "./../services/storage.service";
 import { Injectable } from "@angular/core";
 import {
   HttpEvent,
@@ -11,6 +12,9 @@ import { Observable } from "rxjs/Rx"; // IMPORTANTE: IMPORT ATUALIZADO
 // ================================================= //
 @Injectable()
 export class ErrorInterceptor implements HttpInterceptor {
+  // ================================================= //
+  constructor(public storage: StorageService) {}
+
   // ================================================= //
   intercept(
     req: HttpRequest<any>,
@@ -26,12 +30,22 @@ export class ErrorInterceptor implements HttpInterceptor {
       }
       console.log("Erro detectado pelo interceptor:");
       console.log(errorObj);
-
+      switch (errorObj.status) {
+        case 403:
+          this.handle403();
+          break;
+      }
       return Observable.throw(errorObj);
     }) as any;
   }
+
+  // ================================================= //
+  handle403() {
+    this.storage.setLocalUser(null);
+  }
 }
 
+// ================================================= //
 export const ErrorInterceptorProvider = {
   provide: HTTP_INTERCEPTORS,
   useClass: ErrorInterceptor,
