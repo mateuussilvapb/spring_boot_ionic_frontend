@@ -22,17 +22,24 @@ export class HomePage {
     public menu: MenuController,
     public auth: AuthService
   ) {}
-
   // ================================================= //
   ionViewWillEnter() {
     this.menu.swipeEnable(false);
   }
-
+  // ================================================= //
+  ionViewDidEnter() {
+    this.auth.refreshToken().subscribe(
+      (response) => {
+        this.auth.successfulLogin(response.headers.get("Authorization"));
+        this.navCtrl.setRoot("CategoriasPage");
+      },
+      (error) => {}
+    );
+  }
   // ================================================= //
   ionViewDidLeave() {
     this.menu.swipeEnable(true);
   }
-
   // ================================================= //
   login() {
     this.auth.authenticate(this.creds).subscribe(
