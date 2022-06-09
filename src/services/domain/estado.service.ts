@@ -15,4 +15,10 @@ export class EstadoService {
       `https://servicodados.ibge.gov.br/api/v1/localidades/estados`
     );
   }
+  // ================================================= //
+  findOneBySigla(sigla: string): Observable<EstadoDTO> {
+    return this.http.get<EstadoDTO>(
+      `https://servicodados.ibge.gov.br/api/v1/localidades/estados/${sigla}`
+    );
+  }
 }

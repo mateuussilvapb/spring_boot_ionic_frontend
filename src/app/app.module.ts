@@ -1,3 +1,4 @@
+import { CepService } from "./../services/cep.service";
 import { AuthInterceptorProvider } from "./../interceptors/auth-interceptor";
 import { ClienteService } from "./../services/domain/cliente.service";
 import { StorageService } from "./../services/storage.service";
@@ -27,6 +28,7 @@ import { ErrorInterceptorProvider } from "../interceptors/error-interceptor";
   // ================================================= //
   providers: [
     StatusBar,
+    CepService,
     AuthService,
     SplashScreen,
     ClienteService,
