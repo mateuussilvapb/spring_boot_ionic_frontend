@@ -15,14 +15,14 @@
       <ion-input formControlName="email" type="text"></ion-input>
     </ion-item>
     <ion-list radio-group formControlName="tipo">
-      <ion-list-header class="labels">
+      <ion-list-header class="labels tipo-cliente">
         Tipo de cliente
       </ion-list-header>
-      <ion-item class="labels">
+      <ion-item class="labels tipo-cliente-opt">
         <ion-label>Pessoa física</ion-label>
         <ion-radio checked="true" value="1"></ion-radio>
       </ion-item>
-      <ion-item class="labels">
+      <ion-item class="labels tipo-cliente-opt">
         <ion-label>Pessoa jurídica</ion-label>
         <ion-radio value="2"></ion-radio>
       </ion-item>
@@ -71,15 +71,15 @@
     <ion-item class="labels">
       <ion-label stacked>Estado*</ion-label>
       <ion-select formControlName="estadoId" (ionChange)="updateCidades()">
-        <ion-option value="1">Minas Gerais</ion-option>
-        <ion-option value="2">São Paulo</ion-option>
+        <ion-option *ngFor="let estado of estados; first as f" [value]="estado.id" [selected]="f">{{estado.nome}}
+        </ion-option>
       </ion-select>
     </ion-item>
     <ion-item class="labels">
       <ion-label stacked>Cidade*</ion-label>
       <ion-select formControlName="cidadeId">
-        <ion-option value="1">Uberlândia</ion-option>
-        <ion-option value="2">Campinas</ion-option>
+        <ion-option *ngFor="let cidade of cidades" [value]="cidade.id">{{cidade.nome}}
+        </ion-option>
       </ion-select>
     </ion-item>
     <button ion-button block type="submit">Criar conta</button>
