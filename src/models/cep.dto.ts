@@ -9,4 +9,5 @@ export interface CepDTO {
   gia: string;
   ddd: string;
   siafi: string;
+  erro?: string;
 }

@@ -1,3 +1,4 @@
+import { API_CONFIG } from "./../../config/api.config";
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs/Rx";
@@ -12,7 +13,14 @@ export class CidadeService {
   // ================================================= //
   findAll(estadoId: string): Observable<CidadeDTO[]> {
     return this.http.get<CidadeDTO[]>(
-      `https://servicodados.ibge.gov.br/api/v1/localidades/estados/${estadoId}/municipios`
+      `${API_CONFIG.cidadesEstadosUrl}/estados/${estadoId}/municipios`
+    );
+  }
+
+  // ================================================= //
+  findCidadeByNome(cidade: string): Observable<CidadeDTO> {
+    return this.http.get<CidadeDTO>(
+      `${API_CONFIG.cidadesEstadosUrl}/municipios/${cidade}`
     );
   }
 }

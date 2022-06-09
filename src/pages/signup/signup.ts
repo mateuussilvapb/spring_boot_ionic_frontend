@@ -6,7 +6,12 @@ import { EstadoService } from "./../../services/domain/estado.service";
 import { CidadeService } from "./../../services/domain/cidade.service";
 import { Component } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
-import { IonicPage, NavController, NavParams } from "ionic-angular";
+import {
+  AlertController,
+  IonicPage,
+  NavController,
+  NavParams,
+} from "ionic-angular";
 
 // ================================================= //
 @IonicPage()
@@ -28,13 +33,18 @@ export class SignupPage {
   // ================================================= //
   siglaEstado: string;
   // ================================================= //
+  cidadeId: string;
+  // ================================================= //
+  estadoId: string;
+  // ================================================= //
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
     public formBuilder: FormBuilder,
     public cidadeService: CidadeService,
     public estadoService: EstadoService,
-    public cepService: CepService
+    public cepService: CepService,
+    public alertController: AlertController
   ) {
     this.formGroup = this.formBuilder.group({
       nome: [
@@ -88,14 +98,15 @@ export class SignupPage {
   }
   // ================================================= //
   updateCidades() {
-    let estadoId = this.formGroup.value.estadoId;
-    this.cidadeService.findAll(estadoId).subscribe(
+    this.cidadeService.findAll(this.estadoId).subscribe(
       (response) => {
         this.cidades = response;
         this.cidades.sort((a: CidadeDTO, b: CidadeDTO) => {
           return a.nome.localeCompare(b.nome);
         });
-        this.formGroup.controls.cidadeId.setValue(null);
+        if (!this.cidadeId) {
+          this.formGroup.controls.cidadeId.setValue(null);
+        }
       },
       (error) => {}
     );
@@ -104,18 +115,42 @@ export class SignupPage {
   updateEnderecos() {
     this.cepService.findByCep(this.cep).subscribe(
       (response) => {
+        if (response.erro) {
+          let alert = this.alertController.create({
+            title: "Erro: CEP inválido!",
+            message: "Informe o cep corretamente",
+            enableBackdropDismiss: false,
+            buttons: [
+              {
+                text: "OK",
+              },
+            ],
+          });
+          alert.present();
+        }
         this.cepDto = response;
         this.siglaEstado = this.cepDto.uf;
         this.formGroup.controls.logradouro.setValue(this.cepDto.logradouro);
         this.formGroup.controls.complemento.setValue(this.cepDto.complemento);
         this.formGroup.controls.bairro.setValue(this.cepDto.bairro);
-        this.estadoService.findOneBySigla(this.siglaEstado).subscribe(
-          (response) => {
-            this.formGroup.controls.estadoId.setValue(response.id);
+        this.buscaEstado();
+      },
+      (error) => {}
+    );
+  }
+  // ================================================= //
+  buscaEstado() {
+    this.estadoService.findOneBySigla(this.siglaEstado).subscribe(
+      (response) => {
+        this.estadoId = response.id;
+        this.formGroup.controls.estadoId.setValue(response.id);
+        for (const c of this.cidades) {
+          if (c.nome == this.cepDto.localidade) {
+            this.formGroup.controls.cidadeId.setValue(c.id);
+            this.cidadeId = c.id;
             this.updateCidades();
-          },
-          (error) => {}
-        );
+          }
+        }
       },
       (error) => {}
     );
