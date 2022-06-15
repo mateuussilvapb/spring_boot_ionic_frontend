@@ -1,3 +1,4 @@
+// ================================================= //
 export interface CepDTO {
   cep: string;
   logradouro: string;
@@ -5,9 +6,5 @@ export interface CepDTO {
   bairro: string;
   localidade: string;
   uf: string;
-  ibge: string;
-  gia: string;
-  ddd: string;
-  siafi: string;
-  erro?: string;
+  erro?: boolean;
 }

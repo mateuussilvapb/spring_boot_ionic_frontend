@@ -58,7 +58,8 @@
     <!-- ========================================================= -->
     <ion-item class="labels">
       <ion-label floating>CEP*</ion-label>
-      <ion-input (ionChange)="updateEnderecos()" formControlName="cep" type="text" [(ngModel)]="cep"></ion-input>
+      <ion-input (ionChange)="updateEnderecoByCep()" formControlName="cep" type="text" [(ngModel)]="cepFrontEnd">
+      </ion-input>
     </ion-item>
     <p class="danger" style="margin-left: 0px;" *ngIf="formGroup.controls.cep.dirty && formGroup.controls.cep.errors"
       margin-left>Valor inválido
@@ -112,8 +113,9 @@
     <!-- ========================================================= -->
     <ion-item class="labels">
       <ion-label stacked>Estado*</ion-label>
-      <ion-select formControlName="estadoId" (ionChange)="updateCidades()">
-        <ion-option *ngFor="let estado of estados; first as f" [value]="estado.id" [selected]="f">{{estado.nome}}
+      <ion-select [(ngModel)]="estadoFrontEnd" formControlName="estadoId"
+        (ionChange)="updateCidadesFrontEnd(estadoFrontEnd)">
+        <ion-option *ngFor="let estado of estados; first as f" [value]="estado.id" [selected]="f">{{estado.sigla}}
         </ion-option>
       </ion-select>
     </ion-item>

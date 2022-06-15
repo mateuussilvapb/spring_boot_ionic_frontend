@@ -1,3 +1,4 @@
+import { FieldMessage } from "./../models/fieldmessage";
 import { StorageService } from "./../services/storage.service";
 import { Injectable } from "@angular/core";
 import {
@@ -41,18 +42,15 @@ export class ErrorInterceptor implements HttpInterceptor {
         case 403:
           this.handle403();
           break;
+        case 422:
+          this.handle422(errorObj);
+          break;
         default:
           this.handleDefaultError(errorObj);
       }
       return Observable.throw(errorObj);
     }) as any;
   }
-
-  // ================================================= //
-  handle403() {
-    this.storage.setLocalUser(null);
-  }
-
   // ================================================= //
   handle401() {
     let alert = this.alertController.create({
@@ -66,6 +64,40 @@ export class ErrorInterceptor implements HttpInterceptor {
       ],
     });
     alert.present();
+  }
+
+  // ================================================= //
+  handle403() {
+    this.storage.setLocalUser(null);
+  }
+
+  // ================================================= //
+  handle422(errorObj) {
+    let alert = this.alertController.create({
+      title: "Erro 422: validação",
+      message: this.listErrors(errorObj.errors),
+      enableBackdropDismiss: false,
+      buttons: [
+        {
+          text: "OK",
+        },
+      ],
+    });
+    alert.present();
+  }
+
+  listErrors(errors: FieldMessage[]): string {
+    let s: string = "";
+    for (const error of errors) {
+      s =
+        s +
+        "<p><strong>" +
+        error.fieldName +
+        "</strong>: " +
+        error.message +
+        "</p>";
+    }
+    return s;
   }
 
   // ================================================= //

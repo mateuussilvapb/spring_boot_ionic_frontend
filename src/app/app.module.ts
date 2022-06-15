@@ -1,4 +1,3 @@
-import { CepService } from "./../services/cep.service";
 import { AuthInterceptorProvider } from "./../interceptors/auth-interceptor";
 import { ClienteService } from "./../services/domain/cliente.service";
 import { StorageService } from "./../services/storage.service";
@@ -14,6 +13,7 @@ import { MyApp } from "./app.component";
 import { StatusBar } from "@ionic-native/status-bar";
 import { SplashScreen } from "@ionic-native/splash-screen";
 import { ErrorInterceptorProvider } from "../interceptors/error-interceptor";
+import { CepService } from "../services/domain/cep.service";
 
 // ================================================= //
 @NgModule({

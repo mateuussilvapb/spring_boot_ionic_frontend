@@ -1,5 +1,7 @@
+import { Observable } from "rxjs/Rx";
+import { CidadeModel } from "./../../models/cidade.model";
 import { CepDTO } from "./../../models/cep.dto";
-import { CepService } from "./../../services/cep.service";
+import { CepService } from "./../../services/domain/cep.service";
 import { CidadeDTO } from "./../../models/cidade.dto";
 import { EstadoDTO } from "./../../models/estado.dto";
 import { EstadoService } from "./../../services/domain/estado.service";
@@ -12,6 +14,8 @@ import {
   NavController,
   NavParams,
 } from "ionic-angular";
+import { ClienteService } from "../../services/domain/cliente.service";
+import { Subject } from "rxjs";
 
 // ================================================= //
 @IonicPage()
@@ -27,23 +31,20 @@ export class SignupPage {
   // ================================================= //
   cidades: CidadeDTO[];
   // ================================================= //
+  cepFrontEnd: string;
+  // ================================================= //
   cepDto: CepDTO;
   // ================================================= //
-  cep: string;
-  // ================================================= //
-  siglaEstado: string;
-  // ================================================= //
-  cidadeId: string;
-  // ================================================= //
-  estadoId: string;
+  estadoFrontEnd: string;
   // ================================================= //
   constructor(
-    public navCtrl: NavController,
     public navParams: NavParams,
+    public navCtrl: NavController,
+    public cepService: CepService,
     public formBuilder: FormBuilder,
     public cidadeService: CidadeService,
     public estadoService: EstadoService,
-    public cepService: CepService,
+    public clienteService: ClienteService,
     public alertController: AlertController
   ) {
     this.formGroup = this.formBuilder.group({
@@ -70,7 +71,7 @@ export class SignupPage {
       numero: ["25", [Validators.required]],
       complemento: ["Apto 3", []],
       bairro: ["Copacabana", []],
-      cep: ["10828333", [Validators.required, Validators.minLength(8)]],
+      cep: ["58038151", [Validators.required, Validators.minLength(8)]],
       telefone1: ["977261827", [Validators.required]],
       telefone2: ["", []],
       telefone3: ["", []],
@@ -80,79 +81,202 @@ export class SignupPage {
   }
   // ================================================= //
   signupUser() {
-    console.log("Enviou o form");
+    this.clienteService.insert(this.formGroup.value).subscribe(
+      (resonse) => {
+        let title: string = "Sucesso!";
+        let message: string = "Cadastro realizado com sucesso!";
+        let navigate: boolean = true;
+        this.showAlert(title, message, navigate);
+      },
+      (error) => {}
+    );
   }
   // ================================================= //
   ionViewDidLoad() {
     this.estadoService.findAll().subscribe(
       (response) => {
         this.estados = response;
-        this.estados.sort((a: EstadoDTO, b: EstadoDTO) => {
-          return a.nome.localeCompare(b.nome);
-        });
         this.formGroup.controls.estadoId.setValue(this.estados[0].id);
-        this.updateCidades();
+        this.getEstadoById(this.estados[0].id).subscribe(
+          (response) => {
+            let estadoDto: EstadoDTO = response;
+            this.getInfoEstado(estadoDto.sigla);
+          },
+          (error) => {}
+        );
       },
       (error) => {}
     );
   }
   // ================================================= //
-  updateCidades() {
-    this.cidadeService.findAll(this.estadoId).subscribe(
-      (response) => {
-        this.cidades = response;
-        this.cidades.sort((a: CidadeDTO, b: CidadeDTO) => {
-          return a.nome.localeCompare(b.nome);
-        });
-        if (!this.cidadeId) {
-          this.formGroup.controls.cidadeId.setValue(null);
-        }
-      },
-      (error) => {}
-    );
+  updateCidades(cidadesDto: CidadeDTO[]) {
+    this.cidades = cidadesDto;
+    this.cidades.sort((a, b) => {
+      return a.nome.localeCompare(b.nome);
+    });
   }
   // ================================================= //
-  updateEnderecos() {
-    this.cepService.findByCep(this.cep).subscribe(
+  updateEnderecoByCep() {
+    this.cepService.findEndereco(this.cepFrontEnd).subscribe(
       (response) => {
         if (response.erro) {
-          let alert = this.alertController.create({
-            title: "Erro: CEP inválido!",
-            message: "Informe o cep corretamente",
-            enableBackdropDismiss: false,
-            buttons: [
-              {
-                text: "OK",
-              },
-            ],
-          });
-          alert.present();
+          let title: string = "Erro!";
+          let message: string = "CEP inválido. Informe o CEP novamente";
+          let navigate: boolean = false;
+          this.showAlert(title, message, navigate);
+          return;
         }
         this.cepDto = response;
-        this.siglaEstado = this.cepDto.uf;
-        this.formGroup.controls.logradouro.setValue(this.cepDto.logradouro);
-        this.formGroup.controls.complemento.setValue(this.cepDto.complemento);
-        this.formGroup.controls.bairro.setValue(this.cepDto.bairro);
-        this.buscaEstado();
+        this.getInfoEstadoViaCep(this.cepDto.uf);
       },
       (error) => {}
     );
   }
   // ================================================= //
-  buscaEstado() {
-    this.estadoService.findOneBySigla(this.siglaEstado).subscribe(
+  getInfoEstadoViaCep(sigla: string) {
+    this.estadoService.findOneBySigla(sigla).subscribe(
       (response) => {
-        this.estadoId = response.id;
-        this.formGroup.controls.estadoId.setValue(response.id);
-        for (const c of this.cidades) {
-          if (c.nome == this.cepDto.localidade) {
-            this.formGroup.controls.cidadeId.setValue(c.id);
-            this.cidadeId = c.id;
-            this.updateCidades();
-          }
-        }
+        let estadoDto: EstadoDTO = response;
+        this.estadoService.findAllCidades(estadoDto.id).subscribe(
+          (response) => {
+            this.updateCidades(response);
+            this.updateForm(estadoDto);
+          },
+          (error) => {}
+        );
       },
       (error) => {}
     );
+  }
+  // ================================================= //
+  getInfoEstado(sigla: string) {
+    this.estadoService.findOneBySigla(sigla).subscribe(
+      (response) => {
+        let estadoDto: EstadoDTO = response;
+        this.estadoService.findAllCidades(estadoDto.id).subscribe(
+          (response) => {
+            this.updateCidades(response);
+          },
+          (error) => {}
+        );
+      },
+      (error) => {}
+    );
+  }
+  // ================================================= //
+  insertCidade() {
+    let estado: EstadoDTO = {
+      id: this.formGroup.controls["estadoId"].value,
+      nome: null,
+      sigla: null,
+    };
+    let cidade: CidadeModel = {
+      id: null,
+      nome: this.cepDto.localidade,
+      estado: estado,
+    };
+    this.cidadeService.insert(cidade).subscribe(
+      (response) => {
+        let cidadeAux: CidadeDTO = {
+          id: response.body["id"],
+          nome: response.body["nome"],
+        };
+        this.cidades.push(cidadeAux);
+        this.cidades.sort((a, b) => {
+          return a.nome.localeCompare(b.nome);
+        });
+        this.updateCidadesDoEstado(this.cidades[this.cidades.length - 1].id);
+        this.formGroup.controls.cidadeId.setValue(cidadeAux.id);
+      },
+      (error) => {
+        console.log("Erro ao inserir cidade.\n", error);
+      }
+    );
+  }
+  // ================================================= //
+  updateCidadesDoEstado(cidadeId: string) {
+    let estadoId = this.formGroup.controls["estadoId"].value;
+    this.estadoService.updateCidadesDoEstado(estadoId, cidadeId).subscribe(
+      (response) => {},
+      (error) => {
+        console.log(error);
+      }
+    );
+  }
+  // ================================================= //
+  updateForm(estadoDto: EstadoDTO) {
+    this.formGroup.controls.estadoId.setValue(estadoDto.id);
+    this.formGroup.controls.logradouro.setValue(this.cepDto.logradouro);
+    this.formGroup.controls.complemento.setValue(this.cepDto.complemento);
+    this.formGroup.controls.bairro.setValue(this.cepDto.bairro);
+    let temCidade = false;
+    for (const cidade of this.cidades) {
+      if (cidade.nome === this.cepDto.localidade) {
+        temCidade = true;
+        this.formGroup.controls.cidadeId.setValue(cidade.id);
+      }
+    }
+    if (!temCidade) {
+      this.insertCidade();
+    }
+    this.updateCidadesFrontEnd(estadoDto.id);
+  }
+  // ================================================= //
+  getEstadoById(estadoId: string): Observable<EstadoDTO> {
+    let estadoDto: EstadoDTO;
+    var subject = new Subject<EstadoDTO>();
+    this.estadoService.findOneById(estadoId).subscribe(
+      (response) => {
+        estadoDto = response;
+        subject.next(estadoDto);
+      },
+      (error) => {
+        return null;
+      }
+    );
+    return subject.asObservable();
+  }
+  // ================================================= //
+  updateCidadesFrontEnd(estadoId: string) {
+    this.getEstadoById(estadoId).subscribe(
+      (response) => {
+        let estadoDto: EstadoDTO = response;
+        this.getInfoEstado(estadoDto.sigla);
+      },
+      (error) => {}
+    );
+  }
+
+  // ================================================= //
+  // ================================================= //
+  showAlert(title: string, message: string, navigate: boolean) {
+    let alert;
+    if (navigate) {
+      alert = this.alertController.create({
+        title: title,
+        message: message,
+        enableBackdropDismiss: false,
+        buttons: [
+          {
+            text: "OK",
+            handler: () => {
+              this.navCtrl.pop();
+            },
+          },
+        ],
+      });
+    } else {
+      alert = this.alertController.create({
+        title: title,
+        message: message,
+        enableBackdropDismiss: false,
+        buttons: [
+          {
+            text: "OK",
+          },
+        ],
+      });
+    }
+    alert.present();
   }
 }
