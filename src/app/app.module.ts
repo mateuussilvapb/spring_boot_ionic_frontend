@@ -1,3 +1,4 @@
+import { ProdutoService } from "./../services/domain/produto.service";
 import { AuthInterceptorProvider } from "./../interceptors/auth-interceptor";
 import { ClienteService } from "./../services/domain/cliente.service";
 import { StorageService } from "./../services/storage.service";
@@ -31,6 +32,7 @@ import { CepService } from "../services/domain/cep.service";
     CepService,
     AuthService,
     SplashScreen,
+    ProdutoService,
     ClienteService,
     StorageService,
     CategoriaService,
