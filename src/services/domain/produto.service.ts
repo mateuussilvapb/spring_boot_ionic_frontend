@@ -1,3 +1,4 @@
+import { Observable } from "rxjs/Rx";
 import { API_CONFIG } from "./../../config/api.config";
 import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
@@ -12,6 +13,14 @@ export class ProdutoService {
   findByCategoria(categoria_id: string) {
     return this.http.get(
       `${API_CONFIG.baseUrl}/produtos/?categorias=${categoria_id}`
+    );
+  }
+
+  // ================================================= //
+  getSmallImageFromBucket(produto_id: string): Observable<any> {
+    return this.http.get(
+      `${API_CONFIG.bucketBaseUrl}/prod${produto_id}-small.jpg`,
+      { responseType: "blob" }
     );
   }
 }
