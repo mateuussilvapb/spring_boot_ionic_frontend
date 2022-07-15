@@ -7,24 +7,28 @@
       <!-- ========================================================= -->
       <ion-icon name="menu"></ion-icon>
     </button>
-    <!-- ========================================================= -->
-    <ion-title>Produtos</ion-title>
+    <ion-title>ProdutoDetail</ion-title>
   </ion-navbar>
 </ion-header>
 
 <!-- ========================================================= -->
 <ion-content padding>
   <!-- ========================================================= -->
-  <ion-list>
+  <ion-card>
     <!-- ========================================================= -->
-    <button class="neumorphism" ion-item *ngFor="let item of items" (click)="showDetail()">
+    <img [src]="item?.imageUrl || 'assets/imgs/prod.jpg'" />
+    <!-- ========================================================= -->
+    <ion-card-content>
       <!-- ========================================================= -->
-      <ion-thumbnail item-start>
-        <!-- ========================================================= -->
-        <img [src]="item.imageUrl || 'assets/imgs/prod.jpg'">
-      </ion-thumbnail>
-      <h2>{{item.nome}}</h2>
-      <p>{{item.preco | currency: "BRL"}}</p>
-    </button>
-  </ion-list>
+      <ion-card-title>
+        {{item?.nome}}
+      </ion-card-title>
+      <!-- ========================================================= -->
+      <p>
+        {{item?.preco | currency: "BRL"}}
+      </p>
+    </ion-card-content>
+  </ion-card>
+
+  <button ion-button block outline>Adicionar ao carrinho</button>
 </ion-content>
