@@ -1,3 +1,4 @@
+import { CartService } from './../services/domain/cart.service';
 import { ProdutoService } from "./../services/domain/produto.service";
 import { AuthInterceptorProvider } from "./../interceptors/auth-interceptor";
 import { ClienteService } from "./../services/domain/cliente.service";
@@ -30,6 +31,7 @@ import { CepService } from "../services/domain/cep.service";
   providers: [
     StatusBar,
     CepService,
+    CartService,
     AuthService,
     SplashScreen,
     ProdutoService,
