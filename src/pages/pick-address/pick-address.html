@@ -21,7 +21,7 @@
       Selecione um endereço
     </ion-list-header>
     <!-- ================================================ -->
-    <button ion-item *ngFor="let item of items">
+    <button ion-item *ngFor="let item of items" (click)="nextPage(item)">
       <!-- ================================================ -->
       <h2>{{item.logradouro}}, {{item.numero}}</h2>
       <!-- ================================================ -->
