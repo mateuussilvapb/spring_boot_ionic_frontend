@@ -15,6 +15,14 @@
 <!-- ================================================ -->
 <ion-content padding>
   <!-- ================================================ -->
+  <ion-fab top right edge>
+    <!-- ================================================ -->
+    <button navPush="CartPage" ion-fab mini>
+      <!-- ================================================ -->
+      <ion-icon name="cart"></ion-icon>
+    </button>
+  </ion-fab>
+  <!-- ================================================ -->
   <ion-list>
     <!-- ================================================ -->
     <button class="neumorphism" ion-item *ngFor="let item of items" (click)="showProdutos(item.id)">
