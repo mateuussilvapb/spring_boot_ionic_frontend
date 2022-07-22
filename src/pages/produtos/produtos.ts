@@ -20,14 +20,19 @@ export class ProdutosPage {
     public loadingCtrl: LoadingUtilsService
   ) {}
   // ================================================= //
-  items: ProdutoDTO[];
+  /*
+  Inicializado vazio para que funcione o infinite scroll
+  */
+  items: ProdutoDTO[] = [];
+  // ================================================= //
+  page: number = 0;
   // ================================================= //
   ionViewDidLoad() {
     this.loadData();
   }
   // ================================================= //
-  loadImageUrls() {
-    for (let i = 0; i < this.items.length; i++) {
+  loadImageUrls(start: number, end: number) {
+    for (let i = start; i < end; i++) {
       let item: ProdutoDTO = this.items[i];
       this.produtoService.getSmallImageFromBucket(item.id).subscribe(
         (response) => {
@@ -46,10 +51,17 @@ export class ProdutosPage {
     let categoria_id = this.navParams.get("categoria_id");
     let loader = this.loadingCtrl.presentLoading();
     loader.present();
-    this.produtoService.findByCategoria(categoria_id).subscribe(
+    this.produtoService.findByCategoria(categoria_id, this.page, 10).subscribe(
       (response) => {
-        this.items = response["content"];
-        this.loadImageUrls();
+        let start = this.items.length;
+        /*
+        Implementado com o .concat para que funcione o infinite scroll
+         */
+        this.items = this.items.concat(response["content"]);
+        let end = this.items.length - 1;
+        this.loadImageUrls(start, end);
+        console.log(this.page);
+        console.log(this.items);
         loader.dismiss();
       },
       (error) => {
@@ -59,6 +71,16 @@ export class ProdutosPage {
   }
   // ================================================= //
   doRefresh(event) {
+    this.page = 0;
+    this.items = [];
+    this.loadData();
+    setTimeout(() => {
+      event.complete();
+    }, 1000);
+  }
+  // ================================================= //
+  doInfinite(event) {
+    this.page++;
     this.loadData();
     setTimeout(() => {
       event.complete();
