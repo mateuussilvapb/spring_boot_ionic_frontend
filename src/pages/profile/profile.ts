@@ -1,3 +1,4 @@
+import { AlertUtilsService } from "./../../utils/alert.utils";
 import { API_CONFIG } from "./../../config/api.config";
 import { ClienteService } from "./../../services/domain/cliente.service";
 import { ClienteDTO } from "./../../models/cliente.dto";
@@ -18,7 +19,8 @@ export class ProfilePage {
     public navCtrl: NavController,
     public navParams: NavParams,
     public storage: StorageService,
-    public clienteService: ClienteService
+    public clienteService: ClienteService,
+    public alertUtils: AlertUtilsService
   ) {}
   // ================================================= //
   ionViewDidLoad() {
@@ -31,6 +33,11 @@ export class ProfilePage {
         },
         (error) => {
           if (error.status) {
+            this.alertUtils.showAlert(
+              "Erro ao recuperar usuário!",
+              "Não foi possível recuperar as informações do usuário. \nAcesse sua conta e tente novamente.",
+              false
+            );
             this.navCtrl.setRoot("HomePage");
           }
         }

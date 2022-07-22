@@ -1,3 +1,4 @@
+import { AlertUtilsService } from "./../../utils/alert.utils";
 import { CartService } from "./../../services/domain/cart.service";
 import { PedidoDTO } from "./../../models/pedido.dto";
 import { StorageService } from "./../../services/storage.service";
@@ -19,7 +20,8 @@ export class PickAddressPage {
     public navParams: NavParams,
     public storageService: StorageService,
     public clienteService: ClienteService,
-    public cartService: CartService
+    public cartService: CartService,
+    public alertUtils: AlertUtilsService
   ) {}
   // ================================================= //
   ionViewDidLoad() {
@@ -47,6 +49,11 @@ export class PickAddressPage {
         },
         (error) => {
           if (error.status) {
+            this.alertUtils.showAlert(
+              "Erro ao recuperar usuário!",
+              "Não foi possível recuperar as informações do usuário. \nAcesse sua conta e tente novamente.",
+              false
+            );
             this.navCtrl.setRoot("HomePage");
           }
         }
