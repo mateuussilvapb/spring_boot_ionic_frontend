@@ -1,10 +1,10 @@
-import { AlertUtilsService } from "./../../utils/alert.utils";
 import { API_CONFIG } from "./../../config/api.config";
 import { ClienteService } from "./../../services/domain/cliente.service";
 import { ClienteDTO } from "./../../models/cliente.dto";
 import { StorageService } from "./../../services/storage.service";
 import { Component } from "@angular/core";
 import { IonicPage, NavController, NavParams } from "ionic-angular";
+import { AlertUtilsService } from "../../services/alert.service";
 
 // ================================================= //
 @IonicPage()
@@ -35,8 +35,7 @@ export class ProfilePage {
           if (error.status) {
             this.alertUtils.showAlert(
               "Erro ao recuperar usuário!",
-              "Não foi possível recuperar as informações do usuário. \nAcesse sua conta e tente novamente.",
-              false
+              "Não foi possível recuperar as informações do usuário. \nAcesse sua conta e tente novamente."
             );
             this.navCtrl.setRoot("HomePage");
           }

@@ -1,4 +1,3 @@
-import { AlertUtilsService } from "./../../utils/alert.utils";
 import { Observable } from "rxjs/Rx";
 import { CidadeModel } from "./../../models/cidade.model";
 import { CepDTO } from "./../../models/cep.dto";
@@ -9,14 +8,10 @@ import { EstadoService } from "./../../services/domain/estado.service";
 import { CidadeService } from "./../../services/domain/cidade.service";
 import { Component } from "@angular/core";
 import { FormBuilder, FormGroup, Validators } from "@angular/forms";
-import {
-  AlertController,
-  IonicPage,
-  NavController,
-  NavParams,
-} from "ionic-angular";
+import { IonicPage, NavController, NavParams } from "ionic-angular";
 import { ClienteService } from "../../services/domain/cliente.service";
 import { Subject } from "rxjs";
+import { AlertUtilsService } from "../../services/alert.service";
 
 // ================================================= //
 @IonicPage()
@@ -86,8 +81,8 @@ export class SignupPage {
       (resonse) => {
         let title: string = "Sucesso!";
         let message: string = "Cadastro realizado com sucesso!";
-        let navigate: boolean = true;
-        this.alertUtils.showAlert(title, message, navigate);
+        this.alertUtils.showAlert(title, message);
+        this.navCtrl.pop();
       },
       (error) => {}
     );
@@ -123,8 +118,7 @@ export class SignupPage {
         if (response.erro) {
           let title: string = "Erro!";
           let message: string = "CEP inválido. Informe o CEP novamente";
-          let navigate: boolean = false;
-          this.alertUtils.showAlert(title, message, navigate);
+          this.alertUtils.showAlert(title, message);
           return;
         }
         this.cepDto = response;

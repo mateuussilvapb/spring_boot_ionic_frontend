@@ -1,4 +1,3 @@
-import { AlertUtilsService } from "./../../utils/alert.utils";
 import { CartService } from "./../../services/domain/cart.service";
 import { PedidoDTO } from "./../../models/pedido.dto";
 import { StorageService } from "./../../services/storage.service";
@@ -6,6 +5,7 @@ import { ClienteService } from "./../../services/domain/cliente.service";
 import { EnderecoDTO } from "./../../models/endereco.dto";
 import { Component } from "@angular/core";
 import { IonicPage, NavController, NavParams } from "ionic-angular";
+import { AlertUtilsService } from "../../services/alert.service";
 
 // ================================================= //
 @IonicPage()
@@ -51,8 +51,7 @@ export class PickAddressPage {
           if (error.status) {
             this.alertUtils.showAlert(
               "Erro ao recuperar usuário!",
-              "Não foi possível recuperar as informações do usuário. \nAcesse sua conta e tente novamente.",
-              false
+              "Não foi possível recuperar as informações do usuário. \nAcesse sua conta e tente novamente."
             );
             this.navCtrl.setRoot("HomePage");
           }

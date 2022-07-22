@@ -1,4 +1,3 @@
-import { AlertUtilsService } from "./../../utils/alert.utils";
 import { PedidoService } from "./../../services/domain/pedido.service";
 import { ClienteService } from "./../../services/domain/cliente.service";
 import { EnderecoDTO } from "./../../models/endereco.dto";
@@ -8,6 +7,7 @@ import { CartItem } from "./../../models/cart-item";
 import { PedidoDTO } from "./../../models/pedido.dto";
 import { Component } from "@angular/core";
 import { IonicPage, NavController, NavParams } from "ionic-angular";
+import { AlertUtilsService } from "../../services/alert.service";
 
 // ================================================= //
 @IonicPage()
@@ -52,6 +52,8 @@ export class OrderConfirmationPage {
   // ================================================= //
   endereco: EnderecoDTO;
   // ================================================= //
+  codPedido: string;
+  // ================================================= //
   private findEndereco(id: string, list: EnderecoDTO[]): EnderecoDTO {
     let position = list.findIndex((x) => x.id == id);
     return list[position];
@@ -69,18 +71,26 @@ export class OrderConfirmationPage {
     this.pedidoService.insert(this.pedido).subscribe(
       (response) => {
         this.cartService.createOrClearCart();
-        console.log(response.headers.get("location"));
+        this.codPedido = this.extractId(response.headers.get("location"));
       },
       (error) => {
         if (error.starus == 403) {
           this.alertUtils.showAlert(
             "Erro ao registrar pedido!",
-            "Não foi possível registrar o seu pedido. \nVerifique se o pagamento foi gerado e tente novamente.",
-            false
+            "Não foi possível registrar o seu pedido. \nVerifique se o pagamento foi gerado e tente novamente."
           );
           this.navCtrl.setRoot("HomePage");
         }
       }
     );
+  }
+  // ================================================= //
+  home() {
+    this.navCtrl.setRoot("CategoriasPage");
+  }
+  // ================================================= //
+  private extractId(location: string): string {
+    let position = location.lastIndexOf("/");
+    return location.substring(position + 1, location.length);
   }
 }

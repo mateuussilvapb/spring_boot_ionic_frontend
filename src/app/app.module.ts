@@ -16,7 +16,8 @@ import { StatusBar } from "@ionic-native/status-bar";
 import { SplashScreen } from "@ionic-native/splash-screen";
 import { ErrorInterceptorProvider } from "../interceptors/error-interceptor";
 import { CepService } from "../services/domain/cep.service";
-import { AlertUtilsService } from '../utils/alert.utils';
+import { AlertUtilsService } from '../services/alert.service';
+// import { AlertUtilsService } from '../utils/alert.utils';
 
 // ================================================= //
 @NgModule({
