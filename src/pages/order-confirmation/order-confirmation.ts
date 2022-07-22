@@ -7,7 +7,8 @@ import { CartItem } from "./../../models/cart-item";
 import { PedidoDTO } from "./../../models/pedido.dto";
 import { Component } from "@angular/core";
 import { IonicPage, NavController, NavParams } from "ionic-angular";
-import { AlertUtilsService } from "../../services/alert.service";
+import { AlertUtilsService } from "../../utils/alert.utils";
+import { LoadingUtilsService } from "../../utils/loading.utils";
 
 // ================================================= //
 @IonicPage()
@@ -23,7 +24,8 @@ export class OrderConfirmationPage {
     public cartService: CartService,
     public clienteService: ClienteService,
     public pedidoService: PedidoService,
-    public alertUtils: AlertUtilsService
+    public alertUtils: AlertUtilsService,
+    public loadingCtrl: LoadingUtilsService
   ) {
     this.pedido = this.navParams.get("pedido");
   }
@@ -68,12 +70,16 @@ export class OrderConfirmationPage {
   }
   // ================================================= //
   checkout() {
+    let loader = this.loadingCtrl.presentLoading();
+    loader.present();
     this.pedidoService.insert(this.pedido).subscribe(
       (response) => {
         this.cartService.createOrClearCart();
         this.codPedido = this.extractId(response.headers.get("location"));
+        loader.dismiss();
       },
       (error) => {
+        loader.dismiss();
         if (error.starus == 403) {
           this.alertUtils.showAlert(
             "Erro ao registrar pedido!",

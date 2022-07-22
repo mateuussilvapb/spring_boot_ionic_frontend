@@ -5,7 +5,7 @@ import { ClienteService } from "./../../services/domain/cliente.service";
 import { EnderecoDTO } from "./../../models/endereco.dto";
 import { Component } from "@angular/core";
 import { IonicPage, NavController, NavParams } from "ionic-angular";
-import { AlertUtilsService } from "../../services/alert.service";
+import { AlertUtilsService } from "../../utils/alert.utils";
 
 // ================================================= //
 @IonicPage()

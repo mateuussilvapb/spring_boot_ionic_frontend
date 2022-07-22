@@ -4,7 +4,7 @@ import { ClienteDTO } from "./../../models/cliente.dto";
 import { StorageService } from "./../../services/storage.service";
 import { Component } from "@angular/core";
 import { IonicPage, NavController, NavParams } from "ionic-angular";
-import { AlertUtilsService } from "../../services/alert.service";
+import { AlertUtilsService } from "../../utils/alert.utils";
 
 // ================================================= //
 @IonicPage()

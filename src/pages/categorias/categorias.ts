@@ -3,6 +3,7 @@ import { CategoriaDTO } from "./../../models/categoria.dto";
 import { Component } from "@angular/core";
 import { IonicPage, NavController, NavParams } from "ionic-angular";
 import { CategoriaService } from "../../services/domain/categoria.service";
+import { LoadingUtilsService } from "../../utils/loading.utils";
 
 // ================================================= //
 @IonicPage()
@@ -20,16 +21,22 @@ export class CategoriasPage {
   constructor(
     public navCtrl: NavController,
     public navParams: NavParams,
-    public categoriaService: CategoriaService
+    public categoriaService: CategoriaService,
+    public loadingCtrl: LoadingUtilsService
   ) {}
 
   // ================================================= //
   ionViewDidLoad() {
+    let loader = this.loadingCtrl.presentLoading();
+    loader.present();
     this.categoriaService.findAll().subscribe(
       (response) => {
         this.items = response;
+        loader.dismiss();
       },
-      (error) => {}
+      (error) => {
+        loader.dismiss();
+      }
     );
   }
 

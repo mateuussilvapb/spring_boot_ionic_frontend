@@ -4,6 +4,7 @@ import { ProdutoDTO } from "./../../models/produto.dto";
 import { Component } from "@angular/core";
 import { IonicPage, NavController, NavParams } from "ionic-angular";
 import { API_CONFIG } from "../../config/api.config";
+import { LoadingUtilsService } from "../../utils/loading.utils";
 
 // ================================================= //
 @IonicPage()
@@ -17,21 +18,27 @@ export class ProdutoDetailPage {
     public navCtrl: NavController,
     public navParams: NavParams,
     public produtoService: ProdutoService,
-    public cartService: CartService
+    public cartService: CartService,
+    public loadingCtrl: LoadingUtilsService
   ) {}
-  // ================================================= //
-  item: ProdutoDTO;
   // ================================================= //
   ionViewDidLoad() {
     let produto_id = this.navParams.get("produto_id");
+    let loader = this.loadingCtrl.presentLoading();
+    loader.present();
     this.produtoService.findById(produto_id).subscribe(
       (response) => {
         this.item = response;
         this.getImageUrlIfExists();
       },
-      (error) => {}
+      (error) => {
+        loader.dismiss();
+      }
     );
+    loader.dismiss();
   }
+  // ================================================= //
+  item: ProdutoDTO;
   // ================================================= //
   getImageUrlIfExists() {
     this.produtoService.getImageFromBucket(this.item.id).subscribe(

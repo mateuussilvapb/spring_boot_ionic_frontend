@@ -11,7 +11,7 @@ import { FormBuilder, FormGroup, Validators } from "@angular/forms";
 import { IonicPage, NavController, NavParams } from "ionic-angular";
 import { ClienteService } from "../../services/domain/cliente.service";
 import { Subject } from "rxjs";
-import { AlertUtilsService } from "../../services/alert.service";
+import { AlertUtilsService } from "../../utils/alert.utils";
 
 // ================================================= //
 @IonicPage()
