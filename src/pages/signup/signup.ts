@@ -1,3 +1,4 @@
+import { AlertUtilsService } from "./../../utils/alert.utils";
 import { Observable } from "rxjs/Rx";
 import { CidadeModel } from "./../../models/cidade.model";
 import { CepDTO } from "./../../models/cep.dto";
@@ -45,7 +46,7 @@ export class SignupPage {
     public cidadeService: CidadeService,
     public estadoService: EstadoService,
     public clienteService: ClienteService,
-    public alertController: AlertController
+    public alertUtils: AlertUtilsService
   ) {
     this.formGroup = this.formBuilder.group({
       nome: [
@@ -86,7 +87,7 @@ export class SignupPage {
         let title: string = "Sucesso!";
         let message: string = "Cadastro realizado com sucesso!";
         let navigate: boolean = true;
-        this.showAlert(title, message, navigate);
+        this.alertUtils.showAlert(title, message, navigate);
       },
       (error) => {}
     );
@@ -123,7 +124,7 @@ export class SignupPage {
           let title: string = "Erro!";
           let message: string = "CEP inválido. Informe o CEP novamente";
           let navigate: boolean = false;
-          this.showAlert(title, message, navigate);
+          this.alertUtils.showAlert(title, message, navigate);
           return;
         }
         this.cepDto = response;
@@ -245,38 +246,5 @@ export class SignupPage {
       },
       (error) => {}
     );
-  }
-
-  // ================================================= //
-  // ================================================= //
-  showAlert(title: string, message: string, navigate: boolean) {
-    let alert;
-    if (navigate) {
-      alert = this.alertController.create({
-        title: title,
-        message: message,
-        enableBackdropDismiss: false,
-        buttons: [
-          {
-            text: "OK",
-            handler: () => {
-              this.navCtrl.pop();
-            },
-          },
-        ],
-      });
-    } else {
-      alert = this.alertController.create({
-        title: title,
-        message: message,
-        enableBackdropDismiss: false,
-        buttons: [
-          {
-            text: "OK",
-          },
-        ],
-      });
-    }
-    alert.present();
   }
 }

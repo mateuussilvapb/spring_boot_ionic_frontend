@@ -1,3 +1,4 @@
+import { AlertUtilsService } from "./../../utils/alert.utils";
 import { PedidoService } from "./../../services/domain/pedido.service";
 import { ClienteService } from "./../../services/domain/cliente.service";
 import { EnderecoDTO } from "./../../models/endereco.dto";
@@ -21,7 +22,8 @@ export class OrderConfirmationPage {
     public navParams: NavParams,
     public cartService: CartService,
     public clienteService: ClienteService,
-    public pedidoService: PedidoService
+    public pedidoService: PedidoService,
+    public alertUtils: AlertUtilsService
   ) {
     this.pedido = this.navParams.get("pedido");
   }
@@ -71,6 +73,11 @@ export class OrderConfirmationPage {
       },
       (error) => {
         if (error.starus == 403) {
+          this.alertUtils.showAlert(
+            "Erro ao registrar pedido!",
+            "Não foi possível registrar o seu pedido. \nVerifique se o pagamento foi gerado e tente novamente.",
+            false
+          );
           this.navCtrl.setRoot("HomePage");
         }
       }
