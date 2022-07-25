@@ -1,3 +1,4 @@
+import { Camera, CameraOptions } from "@ionic-native/camera";
 import { API_CONFIG } from "./../../config/api.config";
 import { ClienteService } from "./../../services/domain/cliente.service";
 import { ClienteDTO } from "./../../models/cliente.dto";
@@ -20,7 +21,8 @@ export class ProfilePage {
     public navParams: NavParams,
     public storage: StorageService,
     public clienteService: ClienteService,
-    public alertUtils: AlertUtilsService
+    public alertUtils: AlertUtilsService,
+    public camera: Camera
   ) {}
   // ================================================= //
   ionViewDidLoad() {
@@ -48,12 +50,36 @@ export class ProfilePage {
   // ================================================= //
   cliente: ClienteDTO;
   // ================================================= //
+  picture: string;
+  // ================================================= //
+  cameraOn: boolean = false;
+  // ================================================= //
   getImageIfExists() {
     this.clienteService.getImageFromBucket(this.cliente.id).subscribe(
       (response) => {
         this.cliente.imageUrl = `${API_CONFIG.bucketBaseUrl}/cp${this.cliente.id}.jpg`;
       },
       (error) => {}
+    );
+  }
+  // ================================================= //
+  getCameraPicture() {
+    this.cameraOn = true;
+    const options: CameraOptions = {
+      quality: 100,
+      destinationType: this.camera.DestinationType.DATA_URL,
+      encodingType: this.camera.EncodingType.PNG,
+      mediaType: this.camera.MediaType.PICTURE,
+    };
+
+    this.camera.getPicture(options).then(
+      (imageData) => {
+        // imageData is either a base64 encoded string or a file URI
+        // If it's base64 (DATA_URL):
+        this.picture = "data:image/png;base64," + imageData;
+        this.cameraOn = false;
+      },
+      (err) => {}
     );
   }
 }
