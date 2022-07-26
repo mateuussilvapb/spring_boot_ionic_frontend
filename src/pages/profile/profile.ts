@@ -26,26 +26,7 @@ export class ProfilePage {
   ) {}
   // ================================================= //
   ionViewDidLoad() {
-    let localUser = this.storage.getLocalUser();
-    if (localUser && localUser.email) {
-      this.clienteService.findByEmail(localUser.email).subscribe(
-        (response) => {
-          this.cliente = response as ClienteDTO;
-          this.getImageIfExists();
-        },
-        (error) => {
-          if (error.status) {
-            this.alertUtils.showAlert(
-              "Erro ao recuperar usuário!",
-              "Não foi possível recuperar as informações do usuário. \nAcesse sua conta e tente novamente."
-            );
-            this.navCtrl.setRoot("HomePage");
-          }
-        }
-      );
-    } else {
-      this.navCtrl.setRoot("HomePage");
-    }
+    this.loadData();
   }
   // ================================================= //
   cliente: ClienteDTO;
@@ -81,5 +62,42 @@ export class ProfilePage {
       },
       (err) => {}
     );
+  }
+  // ================================================= //
+  sendPicture() {
+    this.clienteService.uploadPicture(this.picture).subscribe(
+      (response) => {
+        this.picture = null;
+        this.loadData();
+      },
+      (error) => {}
+    );
+  }
+  // ================================================= //
+  loadData() {
+    let localUser = this.storage.getLocalUser();
+    if (localUser && localUser.email) {
+      this.clienteService.findByEmail(localUser.email).subscribe(
+        (response) => {
+          this.cliente = response as ClienteDTO;
+          this.getImageIfExists();
+        },
+        (error) => {
+          if (error.status) {
+            this.alertUtils.showAlert(
+              "Erro ao recuperar usuário!",
+              "Não foi possível recuperar as informações do usuário. \nAcesse sua conta e tente novamente."
+            );
+            this.navCtrl.setRoot("HomePage");
+          }
+        }
+      );
+    } else {
+      this.navCtrl.setRoot("HomePage");
+    }
+  }
+  // ================================================= //
+  cancel() {
+    this.picture = null;
   }
 }
