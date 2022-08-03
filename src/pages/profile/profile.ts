@@ -1,3 +1,4 @@
+import { LoadingUtilsService } from "./../../utils/loading.utils";
 import { Camera, CameraOptions } from "@ionic-native/camera";
 import { API_CONFIG } from "./../../config/api.config";
 import { ClienteService } from "./../../services/domain/cliente.service";
@@ -22,7 +23,8 @@ export class ProfilePage {
     public storage: StorageService,
     public clienteService: ClienteService,
     public alertUtils: AlertUtilsService,
-    public camera: Camera
+    public camera: Camera,
+    public loadingCtrl: LoadingUtilsService
   ) {}
   // ================================================= //
   ionViewDidLoad() {
@@ -60,17 +62,47 @@ export class ProfilePage {
         this.picture = "data:image/png;base64," + imageData;
         this.cameraOn = false;
       },
-      (err) => {}
+      (err) => {
+        this.cameraOn = false;
+      }
+    );
+  }
+  // ================================================= //
+  getGalleryPicture() {
+    this.cameraOn = true;
+    const options: CameraOptions = {
+      quality: 100,
+      sourceType: this.camera.PictureSourceType.PHOTOLIBRARY,
+      destinationType: this.camera.DestinationType.DATA_URL,
+      encodingType: this.camera.EncodingType.PNG,
+      mediaType: this.camera.MediaType.PICTURE,
+    };
+
+    this.camera.getPicture(options).then(
+      (imageData) => {
+        // imageData is either a base64 encoded string or a file URI
+        // If it's base64 (DATA_URL):
+        this.picture = "data:image/png;base64," + imageData;
+        this.cameraOn = false;
+      },
+      (err) => {
+        this.cameraOn = false;
+      }
     );
   }
   // ================================================= //
   sendPicture() {
+    let loader = this.loadingCtrl.presentLoading();
+    loader.present();
     this.clienteService.uploadPicture(this.picture).subscribe(
       (response) => {
         this.picture = null;
         this.loadData();
+        loader.dismiss();
       },
-      (error) => {}
+      (error) => {
+        loader.dismiss();
+      }
     );
   }
   // ================================================= //

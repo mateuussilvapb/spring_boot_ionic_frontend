@@ -34,6 +34,7 @@
   },
   "devDependencies": {
     "@ionic/app-scripts": "3.2.4",
+    "cordova-android": "^10.1.2",
     "cordova-browser": "^6.0.0",
     "cordova-plugin-camera": "git+https://github.com/apache/cordova-plugin-camera.git",
     "cordova-plugin-device": "^2.0.2",
@@ -54,7 +55,8 @@
       "cordova-plugin-camera": {}
     },
     "platforms": [
-      "browser"
+      "browser",
+      "android"
     ]
   }
 }

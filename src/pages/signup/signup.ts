@@ -1,3 +1,4 @@
+import { LoadingUtilsService } from "./../../utils/loading.utils";
 import { Observable } from "rxjs/Rx";
 import { CidadeModel } from "./../../models/cidade.model";
 import { CepDTO } from "./../../models/cep.dto";
@@ -41,34 +42,35 @@ export class SignupPage {
     public cidadeService: CidadeService,
     public estadoService: EstadoService,
     public clienteService: ClienteService,
-    public alertUtils: AlertUtilsService
+    public alertUtils: AlertUtilsService,
+    public loadingCtrl: LoadingUtilsService
   ) {
     this.formGroup = this.formBuilder.group({
       nome: [
-        "Joaquim",
+        "",
         [
           Validators.required,
           Validators.minLength(5),
           Validators.maxLength(120),
         ],
       ],
-      email: ["joaquim@gmail.com", [Validators.required, Validators.email]],
+      email: ["", [Validators.required, Validators.email]],
       tipo: ["1", [Validators.required]],
       cpfOuCnpj: [
-        "06134596280",
+        "",
         [
           Validators.required,
           Validators.minLength(11),
           Validators.maxLength(14),
         ],
       ],
-      senha: ["123", [Validators.required]],
-      logradouro: ["Rua Via", [Validators.required]],
-      numero: ["25", [Validators.required]],
-      complemento: ["Apto 3", []],
-      bairro: ["Copacabana", []],
+      senha: ["", [Validators.required]],
+      logradouro: ["", [Validators.required]],
+      numero: ["", [Validators.required]],
+      complemento: ["", []],
+      bairro: ["", []],
       cep: ["58038151", [Validators.required, Validators.minLength(8)]],
-      telefone1: ["977261827", [Validators.required]],
+      telefone1: ["", [Validators.required]],
       telefone2: ["", []],
       telefone3: ["", []],
       estadoId: [null, [Validators.required]],
@@ -77,14 +79,19 @@ export class SignupPage {
   }
   // ================================================= //
   signupUser() {
+    let loader = this.loadingCtrl.presentLoading();
+    loader.present();
     this.clienteService.insert(this.formGroup.value).subscribe(
       (resonse) => {
+        loader.dismiss();
         let title: string = "Sucesso!";
         let message: string = "Cadastro realizado com sucesso!";
         this.alertUtils.showAlert(title, message);
         this.navCtrl.pop();
       },
-      (error) => {}
+      (error) => {
+        loader.dismiss();
+      }
     );
   }
   // ================================================= //

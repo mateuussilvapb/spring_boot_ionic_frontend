@@ -1,3 +1,4 @@
+import { LoadingUtilsService } from "./../../utils/loading.utils";
 import { AuthService } from "./../../services/auth.service";
 import { CredenciaisDTO } from "./../../models/credenciais.dto";
 import { Component } from "@angular/core";
@@ -20,7 +21,8 @@ export class HomePage {
   constructor(
     public navCtrl: NavController,
     public menu: MenuController,
-    public auth: AuthService
+    public auth: AuthService,
+    public loadingCtrl: LoadingUtilsService
   ) {}
   // ================================================= //
   ionViewWillEnter() {
@@ -42,12 +44,17 @@ export class HomePage {
   }
   // ================================================= //
   login() {
+    let loader = this.loadingCtrl.presentLoading();
+    loader.present();
     this.auth.authenticate(this.creds).subscribe(
       (response) => {
         this.auth.successfulLogin(response.headers.get("Authorization"));
         this.navCtrl.setRoot("CategoriasPage");
+        loader.dismiss();
       },
-      (error) => {}
+      (error) => {
+        loader.dismiss();
+      }
     );
   }
   // ================================================= //
