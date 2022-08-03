@@ -7,6 +7,7 @@ import { StorageService } from "./../../services/storage.service";
 import { Component } from "@angular/core";
 import { IonicPage, NavController, NavParams } from "ionic-angular";
 import { AlertUtilsService } from "../../utils/alert.utils";
+import { DomSanitizer } from "@angular/platform-browser";
 
 // ================================================= //
 @IonicPage()
@@ -24,8 +25,11 @@ export class ProfilePage {
     public clienteService: ClienteService,
     public alertUtils: AlertUtilsService,
     public camera: Camera,
-    public loadingCtrl: LoadingUtilsService
-  ) {}
+    public loadingCtrl: LoadingUtilsService,
+    public sanitizer: DomSanitizer
+  ) {
+    this.profileImage = "assets/imgs/avatar-blank.png";
+  }
   // ================================================= //
   ionViewDidLoad() {
     this.loadData();
@@ -37,13 +41,30 @@ export class ProfilePage {
   // ================================================= //
   cameraOn: boolean = false;
   // ================================================= //
+  profileImage;
+  // ================================================= //
   getImageIfExists() {
     this.clienteService.getImageFromBucket(this.cliente.id).subscribe(
       (response) => {
         this.cliente.imageUrl = `${API_CONFIG.bucketBaseUrl}/cp${this.cliente.id}.jpg`;
+        this.blobToDataURL(response).then((dataUrl) => {
+          let str: string = dataUrl as string;
+          this.profileImage = this.sanitizer.bypassSecurityTrustUrl(str);
+        });
       },
-      (error) => {}
+      (error) => {
+        this.profileImage = "assets/imgs/avatar-blank.png";
+      }
     );
+  }
+  // ================================================= //
+  blobToDataURL(blob) {
+    return new Promise((fulfill, reject) => {
+      let reader = new FileReader();
+      reader.onerror = reject;
+      reader.onload = (e) => fulfill(reader.result);
+      reader.readAsDataURL(blob);
+    });
   }
   // ================================================= //
   getCameraPicture() {
@@ -97,7 +118,7 @@ export class ProfilePage {
     this.clienteService.uploadPicture(this.picture).subscribe(
       (response) => {
         this.picture = null;
-        this.loadData();
+        this.getImageIfExists();
         loader.dismiss();
       },
       (error) => {
